@@ -1,0 +1,52 @@
+<html>
+  <head>
+    </head>
+  <body>
+	First Name: <input id="entityName" type="text"></br>
+	Parent Relationship: <input id="parentRelationship" type="text"></br>
+	Ownership %: <input id="ownershipPercentage" type="text"></br>
+	<input type="button" onclick="drawChart('James', 'Carol', '20%')" value="Add">
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {packages:["orgchart"]});
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+
+        // For each orgchart box, provide the name, manager, and tooltip to show.
+        data.addRows([
+          [{v:'Mike', f:'Mike<div style="color:red; font-style:italic">President</div>'},
+           '', 'The President'],
+          [{v:'Jim', f:'Jim<div style="color:red; font-style:italic">Vice President</div>'},
+           'Mike', 'VP'],
+          ['Alice', 'Mike', ''],
+          ['Bob', 'Jim', 'Bob Sponge'],
+          ['Carol', 'Bob', '']
+        ]);
+		var entityName = document.getElementById("entityName").value;
+		var parentRelationshipName = document.getElementById("parentRelationship").value;
+		var percentageOwnership = document.getElementById("ownershipPercentage").value;
+        // Create the chart.
+		var chartElement = document.createElement("div");
+		chartElement.id = "chart_div";
+		document.body.appendChild(chartElement);
+		individualEntityDataMap = {Name:entityName,RelationshipName:parentRelationshipName,percentage:percentageOwnership};
+		console.log(entityName);
+		var chartDataMap = {[entityName]:individualEntityDataMap};
+		localStorage.setItem("chartData",JSON.stringify(chartDataMap));
+		var dataMap = JSON.parse(localStorage.getItem("chartData"));
+		console.log(dataMap);
+		for(x in dataMap){
+		console.log(dataMap[x]);
+			data.addRow([dataMap[x].Name, dataMap[x].RelationshipName, dataMap[x].percentage]);
+		}
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        // Draw the chart, setting the allowHtml option to true for the tooltips.
+        chart.draw(data, {allowHtml:true});
+      }
+   </script>
+  </body>
+</html>
